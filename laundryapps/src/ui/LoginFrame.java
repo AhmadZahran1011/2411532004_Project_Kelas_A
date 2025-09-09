@@ -66,7 +66,7 @@ public class LoginFrame extends JFrame {
 		txtPassword.setBounds(126, 245, 225, 38);
 		contentPane.add(txtPassword);
 		
-		JButton btnLogin = new JButton("New button");
+		JButton btnLogin = new JButton("LOGIN");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (User.login(txtUsername.getText(), txtPassword.getText())) {

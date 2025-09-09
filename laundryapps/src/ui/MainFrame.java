@@ -6,6 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.SwingConstants;
 
 public class MainFrame extends JFrame {
 
@@ -67,6 +70,11 @@ public class MainFrame extends JFrame {
 		JButton btnKeluar = new JButton("KELUAR");
 		btnKeluar.setBounds(168, 289, 238, 40);
 		contentPane.add(btnKeluar);
+		
+		JLabel lblNewLabel = new JLabel("Laundry Disini");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblNewLabel.setBounds(153, 20, 272, 47);
+		contentPane.add(lblNewLabel);
 	}
-
 }
