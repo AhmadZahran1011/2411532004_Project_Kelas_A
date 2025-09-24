@@ -33,7 +33,7 @@ public class UserRepo implements UserDAO{
 	        try {
 	            st.close();
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	 e.printStackTrace();
 	        }
 	    }
 	}

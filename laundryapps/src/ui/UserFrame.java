@@ -1,14 +1,26 @@
 package ui;
 
 import java.awt.EventQueue;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import DAO.UserRepo;
+import model.User;
+import table.TableUser;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class UserFrame extends JFrame {
 
@@ -18,6 +30,10 @@ public class UserFrame extends JFrame {
 	private JTextField txtUsername;
 	private JTextField txtPassword;
 	private JTable tableUsers;
+	
+	UserRepo usr = new UserRepo();
+	List<User> ls;
+	public String id;
 
 	/**
 	 * Launch the application.
@@ -28,9 +44,13 @@ public class UserFrame extends JFrame {
 				try {
 					UserFrame frame = new UserFrame();
 					frame.setVisible(true);
+					frame.loadTable();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				UserFrame frame = new UserFrame();
+				frame.setVisible(true);
+				frame.loadTable();
 			}
 		});
 	}
@@ -63,14 +83,49 @@ public class UserFrame extends JFrame {
 		contentPane.add(txtPassword);
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				User user = new User();
+				user.setNama(txtName.getText());
+				user.setUsername(txtUsername.getText());
+				user.setPassword(txtPassword.getText());
+				usr.save(user);
+				reset();
+				loadTable();
+			}
+		});
 		btnSave.setBounds(35, 152, 85, 21);
 		contentPane.add(btnSave);
 		
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				User user = new User();
+				user.setNama(txtName.getText());
+				user.setUsername(txtUsername.getText());
+				user.setPassword(txtPassword.getText());
+				user.setId(id);
+				usr.update(user);
+				reset();
+				loadTable();	 
+			}
+		});
 		btnUpdate.setBounds(143, 152, 85, 21);
 		contentPane.add(btnUpdate);
 		
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(id != null) {
+				    usr.delete(id);
+				    reset();
+				    loadTable();
+				} else {
+				    JOptionPane.showMessageDialog(null, "Silahkan pilih data yang akan di hapus");
+				}
+
+			}
+		});
 		btnDelete.setBounds(254, 152, 85, 21);
 		contentPane.add(btnDelete);
 		
@@ -79,6 +134,15 @@ public class UserFrame extends JFrame {
 		contentPane.add(btnCancel);
 		
 		tableUsers = new JTable();
+		tableUsers.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				id = tableUsers.getValueAt(tableUsers.getSelectedRow(), 0).toString();
+				txtName.setText(tableUsers.getValueAt(tableUsers.getSelectedRow(), 1).toString());
+				txtUsername.setText(tableUsers.getValueAt(tableUsers.getSelectedRow(), 2).toString());
+				txtPassword.setText(tableUsers.getValueAt(tableUsers.getSelectedRow(), 3).toString());
+			}
+		});
 		tableUsers.setBounds(35, 203, 485, 244);
 		contentPane.add(tableUsers);
 		
@@ -93,5 +157,16 @@ public class UserFrame extends JFrame {
 		JLabel lblPassword = new JLabel("Password");
 		lblPassword.setBounds(51, 106, 45, 13);
 		contentPane.add(lblPassword);
+	}
+	public void reset() {
+		txtName.setText("");
+		txtUsername.setText("");
+		txtPassword.setText("");
+	}
+	public void loadTable() {
+		ls = usr.show();
+		TableUser tu = new TableUser(ls);
+		tableUsers.setModel(tu);
+		tableUsers.getTableHeader().setVisible(true);
 	}
 }
