@@ -104,7 +104,6 @@ public class UserFrame extends JFrame {
 				user.setNama(txtName.getText());
 				user.setUsername(txtUsername.getText());
 				user.setPassword(txtPassword.getText());
-				user.setId(id);
 				usr.update(user);
 				reset();
 				loadTable();	 
