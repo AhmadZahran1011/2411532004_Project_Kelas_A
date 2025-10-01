@@ -22,8 +22,15 @@ public class User {
 	        Novel novel = (Novel) book;
 	        System.out.println("Genre: " + novel.getGenre());
 	    }
-	    // Tambahkan instanceof untuk tipe lain
-	}
+	    if (book instanceof Magazine) {
+	    	Magazine magazine = (Magazine) book;
+	        System.out.println("Genre: " + magazine.getGenre());
+	    }
+	    if (book instanceof Textbook) {
+	    	Textbook textbook = (Textbook) book;
+	        System.out.println("Genre: " + textbook.getGenre());
+	    }
+	    }
 	// Meminjam buku
 	public void borrowBook(Book book) {
 	    if (book.isAvailable()) {
