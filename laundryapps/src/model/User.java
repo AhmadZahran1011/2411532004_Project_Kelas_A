@@ -2,6 +2,15 @@ package model;
 
 public class User {
 	String id, nama, username, password;
+	
+    public User() {
+        // kosong, tapi dibutuhkan agar bisa pakai new User()
+    }
+	
+	public User(String username, String pass) {
+		this.username = username;
+		this.password = pass;
+	}
 
 	public String getId() {
 		return id;
@@ -35,22 +44,6 @@ public class User {
 		this.password = password;
 	}
 
-	public static boolean login(String username, String password) {
-		boolean isLoggin = false;
-		User user = new User();
-		user.setId("1");
-		user.setNama("fulan");
-		user.setUsername("fulan");
-		user.setPassword("12345");
-		
-		if(user.getUsername().equalsIgnoreCase(username)
-				&& user.getPassword().equalsIgnoreCase(password)) {
-			isLoggin = true;
-		}else {
-			isLoggin = false;
-		}
-		return isLoggin;
-	}
 
 }
 
