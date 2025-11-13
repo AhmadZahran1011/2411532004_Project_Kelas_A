@@ -10,11 +10,11 @@ import model.User;
 
 public class LoginService {
 	public boolean authenticate(User user) {
-		String query = "SELECT * FROM user WHERE email = ? AND password = ?";
+		String query = "SELECT * FROM user WHERE username = ? AND password = ?";
 		
 		try (Connection connection = DbConnection.koneksi();
 			PreparedStatement statement = connection.prepareStatement(query)){
-		statement.setString(1, user.getEmail());
+		statement.setString(1, user.getUsername());
 		statement.setString(2, user.getPassword());
 		
 		ResultSet resultSet = statement.executeQuery();
