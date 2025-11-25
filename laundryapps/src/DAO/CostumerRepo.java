@@ -2,74 +2,110 @@ package DAO;
 
 import config.Database;
 import model.Costumer;
-
+import model.CostumerBuilder;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CostumerRepo implements CostumerDAO {
-    private Connection conn;
+	private static CostumerRepo instance;
 
-    public CostumerRepo() {
-        conn = Database.koneksi();
-    }
+	public static CostumerRepo getInstance() {
+	    if (instance == null) {
+	        instance = new CostumerRepo();
+	    }
+	    return instance;
+	}
+	
+		private Connection connection;
+		private final String insert = "INSERT INTO costumer (nama, alamat, nomorhp) VALUES (?,?,?);";
+		private final String select = "SELECT * FROM costumer;";
+		private final String delete = "DELETE FROM costumer WHERE id=?;";
+		private final String update = "UPDATE costumer SET nama=?, alamat=?, nomorhp=? WHERE id=?;";
+		
+		public CostumerRepo() {
+			// TODO Auto-generated constructor stub
+			connection = Database.koneksi();
+		}
+		@Override
+		public List<Costumer> show() {
+		    List<Costumer> list = new ArrayList<>();
+		    try (Statement st = connection.createStatement()) {
+		        ResultSet rs = st.executeQuery(select);
+		        while (rs.next()) {
 
-    @Override
-    public void save(Costumer c) {
-        String sql = "INSERT INTO customer(id, nama, alamat, no_hp) VALUES(?,?,?,?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            if (c.getId() == null) c.setId(String.valueOf(System.currentTimeMillis()));
-            ps.setString(1, c.getId());
-            ps.setString(2, c.getNama());
-            ps.setString(3, c.getAlamat());
-            ps.setString(4, c.getNomorhp());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+		            Costumer cs = new CostumerBuilder()
+		                    .setId(rs.getString("id"))
+		                    .setNama(rs.getString("nama"))
+		                    .setAlamat(rs.getString("alamat"))
+		                    .setNomorhp(rs.getString("nomorhp"))
+		                    .build();
 
-    @Override
-    public void update(Costumer c) {
-        String sql = "UPDATE customer SET nama = ?, alamat = ?, no_hp = ? WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, c.getNama());
-            ps.setString(2, c.getAlamat());
-            ps.setString(3, c.getNomorhp());
-            ps.setString(4, c.getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+		            list.add(cs);
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return list;
+		}
 
-    @Override
-    public void delete(String id) {
-        String sql = "DELETE FROM customer WHERE id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	    @Override
+	    public void save(Costumer cs) {
+	        PreparedStatement st = null;
+	        try {
+	            st = connection.prepareStatement(insert);
+	            Costumer built = new CostumerBuilder()
+	                    .setNama(cs.getNama())
+	                    .setAlamat(cs.getAlamat())
+	                    .setNomorhp(cs.getNomorhp())
+	                    .build();
 
-    @Override
-    public List<Costumer> show() {
-        List<Costumer> list = new ArrayList<>();
-        String sql = "SELECT * FROM customer";
-        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-            	Costumer c = new Costumer();
-                c.setId(rs.getString("id"));
-                c.setNama(rs.getString("nama"));
-                c.setAlamat(rs.getString("alamat"));
-                c.setNomorhp(rs.getString("no_hp"));
-                list.add(c);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
+	            st.setString(1, built.getNama());
+	            st.setString(2, built.getAlamat());
+	            st.setString(3, built.getNomorhp());
+	            st.executeUpdate();
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try { if (st != null) st.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        }
+	    }
+	    @Override
+	    public void update(Costumer cs) {
+	        try (PreparedStatement st = connection.prepareStatement(update)) {
+	            Costumer built = new CostumerBuilder()
+	                    .setId(cs.getId())
+	                    .setNama(cs.getNama())
+	                    .setAlamat(cs.getAlamat())
+	                    .setNomorhp(cs.getNomorhp())
+	                    .build();
+
+	            st.setString(1, built.getNama());
+	            st.setString(2, built.getAlamat());
+	            st.setString(3, built.getNomorhp());
+	            st.setString(4, built.getId());
+	            st.executeUpdate();
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    @Override
+	    public void delete(String id) {
+	        try (PreparedStatement st = connection.prepareStatement(delete)) {
+	            Costumer temp = new CostumerBuilder()
+	                    .setId(id)
+	                    .build();
+
+	            st.setString(1, temp.getId());
+	            st.executeUpdate();
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+
+
 }
